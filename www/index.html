@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>拿铁因子 · 你比自己想的更富有</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#2b2018">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="拿铁因子">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f7f1e8; --ink:#2b2018; --coffee:#6f4e37; --crema:#c89f7b; --gold:#b8894a;
+  }
+  html,body{background:var(--cream); color:var(--ink); font-family:'Noto Sans SC',system-ui,sans-serif;}
+  .serif{font-family:'Noto Serif SC',serif;}
+  .grain{background-image:radial-gradient(rgba(111,78,55,.08) 1px,transparent 1px); background-size:3px 3px;}
+  .steam{position:absolute; width:6px; height:40px; background:linear-gradient(to top,rgba(255,255,255,0),rgba(255,255,255,.7),rgba(255,255,255,0)); border-radius:50%; filter:blur(3px); animation:steam 3s ease-in-out infinite;}
+  @keyframes steam{0%{transform:translateY(0) scale(1);opacity:.7}100%{transform:translateY(-60px) scale(1.6);opacity:0}}
+  .fade-up{opacity:0; transform:translateY(20px); transition:all .8s ease;}
+  .fade-up.show{opacity:1; transform:none;}
+  .chip{transition:all .2s;}
+  .chip.on{background:var(--coffee); color:#fff; border-color:var(--coffee);}
+  .num{font-variant-numeric: tabular-nums;}
+  .underline-wave{background-image:linear-gradient(transparent 60%, rgba(184,137,74,.35) 60%);}
+  .scroll-shadow{box-shadow:0 1px 0 rgba(43,32,24,.08);}
+  details>summary{list-style:none; cursor:pointer;}
+  details>summary::-webkit-details-marker{display:none;}
+  .marquee{animation:marquee 40s linear infinite;}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body class="grain">
+
+<!-- NAV -->
+<nav class="sticky top-0 z-40 bg-[color:var(--cream)]/85 backdrop-blur scroll-shadow">
+  <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between text-sm">
+    <div class="font-bold serif tracking-wider">☕ The Latte Factor</div>
+    <div class="hidden md:flex gap-6 text-[color:var(--coffee)]">
+      <a href="#story" class="hover:text-[color:var(--ink)]">故事</a>
+      <a href="#step1" class="hover:text-[color:var(--ink)]">① 找因子</a>
+      <a href="#step2" class="hover:text-[color:var(--ink)]">② 看复利</a>
+      <a href="#step3" class="hover:text-[color:var(--ink)]">③ 先付自己</a>
+      <a href="#step4" class="hover:text-[color:var(--ink)]">④ 自动化</a>
+      <a href="#step5" class="hover:text-[color:var(--ink)]">⑤ 梦想账户</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="relative overflow-hidden">
+  <div class="max-w-5xl mx-auto px-6 pt-20 pb-28 grid md:grid-cols-2 gap-12 items-center">
+    <div>
+      <p class="text-[color:var(--gold)] tracking-[0.3em] text-xs mb-6">DAVID BACH · 大卫·巴哈</p>
+      <h1 class="serif text-5xl md:text-6xl font-extrabold leading-[1.15] mb-6">
+        你比自己<br/>想的<span class="underline-wave">更富有</span>。
+      </h1>
+      <p class="text-lg text-[color:var(--coffee)] leading-relaxed mb-8">
+        如果你买得起每天的那杯拿铁，<br/>
+        你就买得起墙上的那幅画。<br/>
+        <span class="text-sm opacity-70">—— 咖啡师亨利</span>
+      </p>
+      <a href="#step1" class="inline-block bg-[color:var(--ink)] text-[color:var(--cream)] px-7 py-3 rounded-full text-sm tracking-wider hover:bg-[color:var(--coffee)] transition">开始 5 步致富之旅 ↓</a>
+    </div>
+    <!-- Coffee cup SVG -->
+    <div class="relative flex justify-center">
+      <div class="steam" style="left:50%; margin-left:-3px; top:-10px; animation-delay:0s"></div>
+      <div class="steam" style="left:50%; margin-left:-15px; top:-10px; animation-delay:.8s"></div>
+      <div class="steam" style="left:50%; margin-left:9px; top:-10px; animation-delay:1.6s"></div>
+      <svg viewBox="0 0 240 220" class="w-72 h-72 drop-shadow-xl">
+        <defs>
+          <radialGradient id="coffee" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#a06b3e"/>
+            <stop offset="100%" stop-color="#3d2616"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="120" cy="200" rx="80" ry="8" fill="rgba(0,0,0,.12)"/>
+        <path d="M40 90 L50 190 Q55 205 75 205 L165 205 Q185 205 190 190 L200 90 Z" fill="#fff" stroke="#2b2018" stroke-width="2"/>
+        <ellipse cx="120" cy="92" rx="80" ry="14" fill="url(#coffee)" stroke="#2b2018" stroke-width="2"/>
+        <ellipse cx="120" cy="90" rx="60" ry="9" fill="#d8b890" opacity=".6"/>
+        <path d="M200 110 Q230 115 230 145 Q230 175 200 175" fill="none" stroke="#2b2018" stroke-width="3"/>
+      </svg>
+    </div>
+  </div>
+  <!-- marquee -->
+  <div class="border-y border-[color:var(--coffee)]/20 bg-[color:var(--cream)]/40 overflow-hidden whitespace-nowrap py-3 text-[color:var(--coffee)] text-sm">
+    <div class="marquee inline-block">
+      &nbsp;&nbsp;先付钱给自己 · Pay Yourself First &nbsp;·&nbsp; 让它自动化 Make it Automatic &nbsp;·&nbsp; 找出你的拿铁因子 Find Your Latte Factor &nbsp;·&nbsp; 富足不只在金钱，更在生命 &nbsp;·&nbsp; 1 天 1 美元，慢慢买下你的梦想 &nbsp;·&nbsp;
+      &nbsp;&nbsp;先付钱给自己 · Pay Yourself First &nbsp;·&nbsp; 让它自动化 Make it Automatic &nbsp;·&nbsp; 找出你的拿铁因子 Find Your Latte Factor &nbsp;·&nbsp; 富足不只在金钱，更在生命 &nbsp;·&nbsp; 1 天 1 美元，慢慢买下你的梦想 &nbsp;·&nbsp;
+    </div>
+  </div>
+</header>
+
+<!-- STORY -->
+<section id="story" class="max-w-3xl mx-auto px-6 py-24 fade-up">
+  <p class="serif text-3xl md:text-4xl leading-relaxed">
+    柔伊每天都觉得"钱不够"。<br/>
+    直到她遇见咖啡师亨利——
+    一个看起来平凡，<br/>却<span class="underline-wave">真正富足</span>的男人。
+  </p>
+  <p class="mt-8 text-[color:var(--coffee)] leading-loose">
+    这本书不是关于咖啡，也不是叫你抠门。<br/>
+    它讲的是：<b class="text-[color:var(--ink)]">那些你以为微不足道的小钱，正在悄悄决定你的一生。</b><br/>
+    现在，跟着柔伊走完亨利教给她的 5 步。
+  </p>
+</section>
+
+<!-- STEP 1 -->
+<section id="step1" class="bg-white/60 border-y border-[color:var(--coffee)]/15">
+  <div class="max-w-4xl mx-auto px-6 py-20 fade-up">
+    <p class="text-xs tracking-[0.3em] text-[color:var(--gold)]">STEP 01</p>
+    <h2 class="serif text-4xl font-bold mt-2 mb-4">找出你的拿铁因子</h2>
+    <p class="text-[color:var(--coffee)] mb-10">勾选你"几乎每天都会花"的小额支出。它们加起来，就是你的拿铁因子。</p>
+
+    <div id="factors" class="flex flex-wrap gap-3"></div>
+
+    <div class="mt-8 flex items-end gap-6 flex-wrap">
+      <div>
+        <div class="text-xs text-[color:var(--coffee)]">每日合计</div>
+        <div class="serif text-5xl font-bold"><span id="dailySum" class="num">0</span><span class="text-xl"> 元</span></div>
+      </div>
+      <div class="text-sm text-[color:var(--coffee)]">
+        每月 <b class="num text-[color:var(--ink)]" id="monthlySum">0</b> 元 · 每年 <b class="num text-[color:var(--ink)]" id="yearlySum">0</b> 元
+      </div>
+    </div>
+
+    <p class="mt-10 italic text-[color:var(--coffee)]">"拿铁因子不是要妳做一个吝啬的人，它只是那些可花可不花的支出。" —— 亨利</p>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section id="step2" class="max-w-4xl mx-auto px-6 py-24 fade-up">
+  <p class="text-xs tracking-[0.3em] text-[color:var(--gold)]">STEP 02</p>
+  <h2 class="serif text-4xl font-bold mt-2 mb-4">如果把它投出去……</h2>
+  <p class="text-[color:var(--coffee)] mb-10">把上面省下的钱，每天定投，按合理年化复利增长。</p>
+
+  <div class="grid md:grid-cols-3 gap-4 mb-8 text-sm">
+    <label class="block">
+      <span class="text-[color:var(--coffee)]">投资年限</span>
+      <input id="years" type="range" min="5" max="50" value="30" class="w-full accent-[color:var(--coffee)]">
+      <div><b class="num" id="yearsLbl">30</b> 年</div>
+    </label>
+    <label class="block">
+      <span class="text-[color:var(--coffee)]">年化回报</span>
+      <input id="rate" type="range" min="3" max="12" value="8" class="w-full accent-[color:var(--coffee)]">
+      <div><b class="num" id="rateLbl">8</b>%（指数基金长期均值约 7–10%）</div>
+    </label>
+    <div class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-2xl p-5">
+      <div class="text-xs opacity-70">最终资产</div>
+      <div class="serif text-3xl font-bold"><span id="finalSum" class="num">0</span> 元</div>
+      <div class="text-xs opacity-70 mt-1">本金 <span id="principal" class="num">0</span> · 复利赚得 <span id="interest" class="num">0</span></div>
+    </div>
+  </div>
+
+  <canvas id="chart" height="120"></canvas>
+
+  <p class="mt-10 serif text-2xl">这就是<span class="underline-wave">复利的魔法</span>。<br/>
+  <span class="text-[color:var(--coffee)] text-base">"哇，这杯拿铁好强大啊！"——柔伊</span></p>
+</section>
+
+<!-- STEP 3 -->
+<section id="step3" class="bg-[color:var(--ink)] text-[color:var(--cream)]">
+  <div class="max-w-4xl mx-auto px-6 py-24 fade-up">
+    <p class="text-xs tracking-[0.3em] text-[color:var(--crema)]">STEP 03</p>
+    <h2 class="serif text-4xl font-bold mt-2 mb-4">先付钱给自己</h2>
+    <p class="text-[color:var(--crema)] mb-10 max-w-2xl">大多数人是：收入 → 房租 → 账单 → 消费 → 剩下才存。<br/>
+    亨利说：颠倒过来。<b class="text-white">收入 → 先扣给自己 → 剩下的才花。</b></p>
+
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <label class="text-sm text-[color:var(--crema)]">月税后收入（元）</label>
+        <input id="income" type="number" value="15000" class="w-full mt-2 bg-transparent border-b-2 border-[color:var(--crema)] py-2 serif text-3xl focus:outline-none">
+
+        <label class="text-sm text-[color:var(--crema)] mt-8 block">先付给自己的比例</label>
+        <input id="payPct" type="range" min="0" max="30" value="10" class="w-full accent-[color:var(--crema)]">
+        <div class="serif text-5xl font-bold mt-2"><span id="payPctLbl" class="num">10</span>%</div>
+        <div class="text-xs text-[color:var(--crema)] mt-1">书中建议：从你的<b>每天前 1 小时工资</b>开始（≈ 12.5%）</div>
+      </div>
+      <div class="bg-[color:var(--coffee)]/30 rounded-2xl p-8 border border-[color:var(--crema)]/30">
+        <div class="text-sm text-[color:var(--crema)]">每月先付自己</div>
+        <div class="serif text-5xl font-bold"><span id="payMonthly" class="num">1500</span> 元</div>
+        <div class="text-sm text-[color:var(--crema)] mt-6">坚持 30 年（年化 8%）</div>
+        <div class="serif text-4xl font-bold"><span id="payFinal" class="num">0</span> 元</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section id="step4" class="max-w-5xl mx-auto px-6 py-24 fade-up">
+  <p class="text-xs tracking-[0.3em] text-[color:var(--gold)]">STEP 04</p>
+  <h2 class="serif text-4xl font-bold mt-2 mb-4">让它自动化</h2>
+  <p class="text-[color:var(--coffee)] mb-10 max-w-2xl">不靠意志力，不靠预算表。发薪日当天自动转账，看不见的钱才存得住。</p>
+
+  <div class="relative">
+    <svg viewBox="0 0 800 280" class="w-full">
+      <!-- 工资 -->
+      <g>
+        <rect x="20" y="110" width="160" height="60" rx="14" fill="#2b2018"/>
+        <text x="100" y="138" fill="#f7f1e8" text-anchor="middle" font-size="14" font-weight="700">工资入账</text>
+        <text x="100" y="158" fill="#c89f7b" text-anchor="middle" font-size="12">发薪日 0:00</text>
+      </g>
+      <!-- 流向线 -->
+      <path d="M180 140 Q300 140 320 70" stroke="#6f4e37" stroke-width="3" fill="none" stroke-dasharray="6 6">
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M180 140 Q300 140 320 140" stroke="#6f4e37" stroke-width="3" fill="none" stroke-dasharray="6 6">
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M180 140 Q300 140 320 210" stroke="#6f4e37" stroke-width="3" fill="none" stroke-dasharray="6 6">
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <!-- 三个账户 -->
+      <g>
+        <rect x="320" y="40" width="220" height="60" rx="14" fill="#b8894a"/>
+        <text x="340" y="68" fill="#fff" font-size="14" font-weight="700">① 投资账户</text>
+        <text x="340" y="88" fill="#fff" opacity=".85" font-size="12">指数基金定投 · 复利</text>
+        <text x="520" y="76" fill="#fff" font-size="18" font-weight="700" text-anchor="end" id="auto1">¥1500</text>
+      </g>
+      <g>
+        <rect x="320" y="110" width="220" height="60" rx="14" fill="#6f4e37"/>
+        <text x="340" y="138" fill="#fff" font-size="14" font-weight="700">② 应急金</text>
+        <text x="340" y="158" fill="#fff" opacity=".85" font-size="12">货币基金 · 3–6 月生活费</text>
+        <text x="520" y="146" fill="#fff" font-size="18" font-weight="700" text-anchor="end" id="auto2">¥750</text>
+      </g>
+      <g>
+        <rect x="320" y="180" width="220" height="60" rx="14" fill="#c89f7b"/>
+        <text x="340" y="208" fill="#2b2018" font-size="14" font-weight="700">③ 梦想账户</text>
+        <text x="340" y="228" fill="#2b2018" opacity=".75" font-size="12">旅行 / 学习 / 换设备</text>
+        <text x="520" y="216" fill="#2b2018" font-size="18" font-weight="700" text-anchor="end" id="auto3">¥300</text>
+      </g>
+      <!-- 剩余 -->
+      <path d="M540 140 Q620 140 640 140" stroke="#2b2018" stroke-width="3" fill="none"/>
+      <rect x="640" y="110" width="140" height="60" rx="14" fill="none" stroke="#2b2018" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="710" y="138" fill="#2b2018" text-anchor="middle" font-size="14" font-weight="700">剩下的</text>
+      <text x="710" y="158" fill="#6f4e37" text-anchor="middle" font-size="12">才是消费预算</text>
+    </svg>
+  </div>
+
+  <div class="mt-8 grid md:grid-cols-3 gap-4 text-sm">
+    <div class="bg-white/60 rounded-2xl p-5 border border-[color:var(--coffee)]/15">
+      <b>① 一次设置</b>
+      <p class="text-[color:var(--coffee)] mt-1">银行 App / 券商 → 设置定期定额转账，发薪日 +1。</p>
+    </div>
+    <div class="bg-white/60 rounded-2xl p-5 border border-[color:var(--coffee)]/15">
+      <b>② 终身受益</b>
+      <p class="text-[color:var(--coffee)] mt-1">从此不再纠结"这个月该存多少"。系统替你执行纪律。</p>
+    </div>
+    <div class="bg-white/60 rounded-2xl p-5 border border-[color:var(--coffee)]/15">
+      <b>③ 越涨越多</b>
+      <p class="text-[color:var(--coffee)] mt-1">每次加薪，先把多出的部分加进自动转账，再考虑消费升级。</p>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 5 -->
+<section id="step5" class="bg-white/60 border-y border-[color:var(--coffee)]/15">
+  <div class="max-w-4xl mx-auto px-6 py-24 fade-up">
+    <p class="text-xs tracking-[0.3em] text-[color:var(--gold)]">STEP 05</p>
+    <h2 class="serif text-4xl font-bold mt-2 mb-4">把梦想，换算成"每天多少钱"</h2>
+    <p class="text-[color:var(--coffee)] mb-10 max-w-2xl">"1 次 1 美元，慢慢买下来。"——地铁广告牌上的那句话。<br/>
+    告诉网页你的梦想，看看你需要每天存多少。</p>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-8">
+      <label class="block">
+        <span class="text-sm text-[color:var(--coffee)]">梦想是什么</span>
+        <input id="dreamName" type="text" value="日本京都旅行" class="w-full mt-2 bg-transparent border-b-2 border-[color:var(--ink)] py-2 serif text-2xl focus:outline-none">
+      </label>
+      <label class="block">
+        <span class="text-sm text-[color:var(--coffee)]">需要多少钱（元）</span>
+        <input id="dreamCost" type="number" value="15000" class="w-full mt-2 bg-transparent border-b-2 border-[color:var(--ink)] py-2 serif text-2xl focus:outline-none">
+      </label>
+      <label class="block">
+        <span class="text-sm text-[color:var(--coffee)]">几个月内实现</span>
+        <input id="dreamMonths" type="number" value="12" class="w-full mt-2 bg-transparent border-b-2 border-[color:var(--ink)] py-2 serif text-2xl focus:outline-none">
+      </label>
+    </div>
+
+    <div class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-3xl p-8 md:p-12">
+      <div class="text-sm text-[color:var(--crema)]">要让 <b id="dn" class="text-white">日本京都旅行</b> 成真，你只需要——</div>
+      <div class="serif text-6xl md:text-7xl font-extrabold mt-3">每天 <span id="dreamDaily" class="num underline-wave">41</span> 元</div>
+      <div class="text-[color:var(--crema)] mt-4 text-sm">≈ 一杯咖啡 + 一份外卖加价 · 即<b class="text-white">你今天的拿铁因子</b></div>
+    </div>
+
+    <p class="mt-10 italic text-[color:var(--coffee)]">"很多人在临终前后悔的，不是自己花了什么，而是自己没去做什么。" —— 柔伊的母亲</p>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="max-w-3xl mx-auto px-6 py-28 text-center fade-up">
+  <p class="serif text-4xl md:text-5xl leading-snug">
+    富足，不只在金钱，<br/>
+    更在<span class="underline-wave">生命</span>。
+  </p>
+  <p class="mt-8 text-[color:var(--coffee)]">现在，去打开你的银行 App，<br/>设第一笔自动转账吧。 ☕</p>
+  <p class="mt-12 text-xs tracking-[0.3em] text-[color:var(--coffee)]/60">基于《拿铁因子：最小又最强的致富习惯》· DAVID BACH &amp; JOHN DAVID MANN</p>
+</section>
+
+<script>
+// ========== STEP 1: factors ==========
+const factors = [
+  {k:'拿铁咖啡', v:30, e:'☕'},
+  {k:'奶茶', v:18, e:'🧋'},
+  {k:'外卖加价', v:15, e:'🍱'},
+  {k:'打车升级', v:20, e:'🚕'},
+  {k:'香烟', v:25, e:'🚬'},
+  {k:'零食饮料', v:10, e:'🍬'},
+  {k:'订阅服务', v:8, e:'📺'},
+  {k:'冲动小购物', v:25, e:'🛍️'},
+  {k:'游戏内购', v:15, e:'🎮'},
+  {k:'便利店随手买', v:12, e:'🏪'},
+];
+const fbox = document.getElementById('factors');
+const state = new Set(['拿铁咖啡','奶茶','外卖加价']);
+factors.forEach(f=>{
+  const b = document.createElement('button');
+  b.className = 'chip border-2 border-[color:var(--coffee)]/30 px-4 py-2 rounded-full text-sm';
+  b.innerHTML = `${f.e} ${f.k} <span class="opacity-60 text-xs">¥${f.v}/天</span>`;
+  if(state.has(f.k)) b.classList.add('on');
+  b.onclick = ()=>{
+    if(state.has(f.k)){state.delete(f.k); b.classList.remove('on');}
+    else{state.add(f.k); b.classList.add('on');}
+    recalc();
+  };
+  fbox.appendChild(b);
+});
+
+let dailySum = 0;
+function recalc(){
+  dailySum = factors.filter(f=>state.has(f.k)).reduce((s,f)=>s+f.v,0);
+  document.getElementById('dailySum').textContent = dailySum;
+  document.getElementById('monthlySum').textContent = (dailySum*30).toLocaleString();
+  document.getElementById('yearlySum').textContent = (dailySum*365).toLocaleString();
+  redrawChart();
+  updateAuto();
+}
+
+// ========== STEP 2: compound chart ==========
+const ctx = document.getElementById('chart');
+let chart;
+function compound(daily, years, ratePct){
+  const r = ratePct/100;
+  const arr = []; let total = 0;
+  for(let y=1;y<=years;y++){
+    total = (total + daily*365)*(1+r);
+    arr.push(Math.round(total));
+  }
+  return arr;
+}
+function redrawChart(){
+  const years = +document.getElementById('years').value;
+  const rate = +document.getElementById('rate').value;
+  document.getElementById('yearsLbl').textContent = years;
+  document.getElementById('rateLbl').textContent = rate;
+  const data = compound(dailySum, years, rate);
+  const principal = dailySum*365*years;
+  const final = data[data.length-1] || 0;
+  document.getElementById('finalSum').textContent = final.toLocaleString();
+  document.getElementById('principal').textContent = principal.toLocaleString();
+  document.getElementById('interest').textContent = Math.max(0,final-principal).toLocaleString();
+
+  // principal line
+  const principalArr = []; for(let y=1;y<=years;y++) principalArr.push(dailySum*365*y);
+
+  const labels = Array.from({length:years},(_,i)=>`${i+1}年`);
+  if(!chart){
+    chart = new Chart(ctx,{
+      type:'line',
+      data:{labels, datasets:[
+        {label:'本金累计', data:principalArr, borderColor:'#c89f7b', backgroundColor:'rgba(200,159,123,.2)', fill:true, tension:.3, pointRadius:0, borderWidth:2},
+        {label:'复利总额', data, borderColor:'#2b2018', backgroundColor:'rgba(43,32,24,.08)', fill:true, tension:.3, pointRadius:0, borderWidth:3},
+      ]},
+      options:{
+        responsive:true,
+        plugins:{legend:{labels:{color:'#2b2018'}}},
+        scales:{
+          x:{ticks:{color:'#6f4e37'},grid:{color:'rgba(111,78,55,.08)'}},
+          y:{ticks:{color:'#6f4e37',callback:v=>v>=10000?(v/10000).toFixed(0)+'万':v},grid:{color:'rgba(111,78,55,.08)'}}
+        }
+      }
+    });
+  } else {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = principalArr;
+    chart.data.datasets[1].data = data;
+    chart.update();
+  }
+}
+document.getElementById('years').oninput = redrawChart;
+document.getElementById('rate').oninput = redrawChart;
+
+// ========== STEP 3: pay yourself ==========
+function updatePay(){
+  const inc = +document.getElementById('income').value || 0;
+  const pct = +document.getElementById('payPct').value;
+  document.getElementById('payPctLbl').textContent = pct;
+  const monthly = Math.round(inc*pct/100);
+  document.getElementById('payMonthly').textContent = monthly.toLocaleString();
+  // 30y, 8%, monthly contribution
+  const r = 0.08/12; const n=30*12;
+  const fv = monthly * ((Math.pow(1+r,n)-1)/r);
+  document.getElementById('payFinal').textContent = Math.round(fv).toLocaleString();
+  updateAuto();
+}
+document.getElementById('income').oninput = updatePay;
+document.getElementById('payPct').oninput = updatePay;
+
+// ========== STEP 4: auto split ==========
+function updateAuto(){
+  const inc = +document.getElementById('income').value || 0;
+  const pct = +document.getElementById('payPct').value;
+  const monthly = Math.round(inc*pct/100);
+  // 60% 投资 / 30% 应急 / 10% 梦想
+  document.getElementById('auto1').textContent = '¥' + Math.round(monthly*0.6).toLocaleString();
+  document.getElementById('auto2').textContent = '¥' + Math.round(monthly*0.3).toLocaleString();
+  document.getElementById('auto3').textContent = '¥' + Math.round(monthly*0.1).toLocaleString();
+}
+
+// ========== STEP 5: dream ==========
+function updateDream(){
+  const name = document.getElementById('dreamName').value || '你的梦想';
+  const cost = +document.getElementById('dreamCost').value || 0;
+  const months = Math.max(1,+document.getElementById('dreamMonths').value || 1);
+  const daily = Math.ceil(cost / (months*30));
+  document.getElementById('dn').textContent = name;
+  document.getElementById('dreamDaily').textContent = daily.toLocaleString();
+}
+['dreamName','dreamCost','dreamMonths'].forEach(id=>document.getElementById(id).oninput=updateDream);
+
+// init
+recalc(); updatePay(); updateDream();
+
+// register service worker (PWA)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+// fade-up observer
+const io = new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting && e.target.classList.add('show')),{threshold:.15});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

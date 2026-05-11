@@ -1,0 +1,12 @@
+{
+  "name": "拿铁因子 · Latte Factor",
+  "short_name": "拿铁因子",
+  "description": "最小又最强的致富习惯 · 5 步走向财务自由",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f1e8",
+  "theme_color": "#2b2018",
+  "lang": "zh-CN"
+}

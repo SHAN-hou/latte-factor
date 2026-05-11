@@ -1,0 +1,11 @@
+{
+  "appId": "com.shanhou.lattefactor",
+  "appName": "拿铁因子",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
