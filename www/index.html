@@ -95,6 +95,15 @@
     </button>
   </div>
 
+  <button onclick="go('chat')" class="mt-3 w-full rounded-2xl bg-[color:var(--gold)] text-white p-4 flex items-center gap-3 card-shadow active:scale-[.98] transition">
+    <div class="text-3xl">🧑‍💼</div>
+    <div class="flex-1 text-left">
+      <div class="font-bold">想买点什么前 → 找亨利聊聊</div>
+      <div class="text-[11px] opacity-90">用《拿铁因子》的逻辑帮你判断该不该买</div>
+    </div>
+    <div class="text-xl">›</div>
+  </button>
+
   <div class="mt-4 rounded-2xl bg-[color:var(--crema)]/30 p-4 text-sm leading-relaxed">
     <b>📖 一句话总结：</b><br/>
     把每天的小钱 → 自动化 → 进入"先付自己"的账户。复利只是锦上添花，<b>纪律本身就是致富。</b>
@@ -269,6 +278,22 @@
   </div>
 </section>
 
+<!-- ============ TAB 6: 亨利对话 ============ -->
+<section data-page="chat" class="page">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="text-3xl">🧑‍💼</div>
+    <div>
+      <h2 class="serif text-xl font-bold leading-tight">亨利</h2>
+      <p class="text-[11px] text-[color:var(--coffee)]">基于《拿铁因子》的购物决策助手</p>
+    </div>
+    <button id="chatRestart" class="ml-auto text-xs border border-[color:var(--coffee)]/30 rounded-full px-3 py-1 text-[color:var(--coffee)]">重新开始</button>
+  </div>
+
+  <div id="chatBox" class="rounded-2xl bg-white/70 card-shadow p-4 space-y-3 min-h-[55vh] max-h-[65vh] overflow-y-auto"></div>
+
+  <div id="chatInputArea" class="mt-3"></div>
+</section>
+
 </main>
 
 <!-- ===== ADD FACTOR MODAL ===== -->
@@ -296,12 +321,13 @@
 
 <!-- ========== BOTTOM TAB BAR ========== -->
 <nav class="fixed bottom-0 inset-x-0 z-40 bg-[color:var(--cream)]/95 backdrop-blur border-t border-[color:var(--coffee)]/15 nav-safe">
-  <div class="max-w-md mx-auto grid grid-cols-5 px-2 py-2">
-    <button class="tab active py-1" data-target="home"><div class="text-xl">🏠</div><div class="text-[10px] mt-0.5">首页</div><div class="tab-dot"></div></button>
-    <button class="tab py-1" data-target="steps"><div class="text-xl">🪜</div><div class="text-[10px] mt-0.5">步骤</div><div class="tab-dot"></div></button>
-    <button class="tab py-1" data-target="tips"><div class="text-xl">💡</div><div class="text-[10px] mt-0.5">技巧</div><div class="tab-dot"></div></button>
-    <button class="tab py-1" data-target="calc"><div class="text-xl">🧮</div><div class="text-[10px] mt-0.5">计算</div><div class="tab-dot"></div></button>
-    <button class="tab py-1" data-target="dream"><div class="text-xl">🌅</div><div class="text-[10px] mt-0.5">梦想</div><div class="tab-dot"></div></button>
+  <div class="max-w-md mx-auto grid grid-cols-6 px-1 py-2">
+    <button class="tab active py-1" data-target="home"><div class="text-lg">🏠</div><div class="text-[9px] mt-0.5">首页</div><div class="tab-dot"></div></button>
+    <button class="tab py-1" data-target="steps"><div class="text-lg">🪜</div><div class="text-[9px] mt-0.5">步骤</div><div class="tab-dot"></div></button>
+    <button class="tab py-1" data-target="tips"><div class="text-lg">💡</div><div class="text-[9px] mt-0.5">技巧</div><div class="tab-dot"></div></button>
+    <button class="tab py-1" data-target="calc"><div class="text-lg">🧮</div><div class="text-[9px] mt-0.5">计算</div><div class="tab-dot"></div></button>
+    <button class="tab py-1" data-target="dream"><div class="text-lg">🌅</div><div class="text-[9px] mt-0.5">梦想</div><div class="tab-dot"></div></button>
+    <button class="tab py-1" data-target="chat"><div class="text-lg">🧑‍💼</div><div class="text-[9px] mt-0.5">亨利</div><div class="tab-dot"></div></button>
   </div>
 </nav>
 
@@ -621,6 +647,179 @@ document.getElementById('resetBtn').onclick = ()=>{
 
 // init
 recalc(); updatePay(); updateEmer(); updateDream();
+
+// ============ HENRY CHAT ============
+const chatBox = document.getElementById('chatBox');
+const chatInput = document.getElementById('chatInputArea');
+const LS_INCOME = 'lf_income_v1';
+let chat = { item:'', price:0, hourly:0, useFreq:0, longing:0, alternative:'' };
+
+function bubble(who, html){
+  const div = document.createElement('div');
+  if(who==='h'){
+    div.className = 'flex gap-2 items-start';
+    div.innerHTML = `<div class="text-2xl flex-shrink-0">🧑‍💼</div><div class="bg-[color:var(--crema)]/30 rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed max-w-[85%]">${html}</div>`;
+  } else {
+    div.className = 'flex justify-end';
+    div.innerHTML = `<div class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-2xl rounded-tr-sm px-4 py-2 text-sm max-w-[85%]">${html}</div>`;
+  }
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function setInput(html){ chatInput.innerHTML = html; }
+function clearInput(){ chatInput.innerHTML = ''; }
+
+const fmt = n => Number(n).toLocaleString();
+function fv(monthly, years, ratePct){
+  const r = ratePct/100/12, n = years*12;
+  return Math.round(monthly*((Math.pow(1+r,n)-1)/r));
+}
+
+function startChat(){
+  chatBox.innerHTML = '';
+  chat = { item:'', price:0, hourly:0, useFreq:0, longing:0 };
+  bubble('h', '嗨。又想买点什么了？☕<br/>先别急着下单，我们聊聊。<br/><br/><b>你想买什么？</b>');
+  askItem();
+}
+
+function askItem(){
+  setInput(`
+    <div class="flex gap-2">
+      <input id="cIn" type="text" placeholder="例如：新款机械键盘" class="flex-1 rounded-full bg-white border-2 border-[color:var(--coffee)]/30 px-4 py-2 text-sm focus:outline-none focus:border-[color:var(--ink)]">
+      <button id="cSend" class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full px-5 text-sm font-bold">发送</button>
+    </div>`);
+  const inp = document.getElementById('cIn'); inp.focus();
+  const send = ()=>{
+    const v = inp.value.trim(); if(!v) return;
+    chat.item = v; bubble('u', v);
+    bubble('h', `好。<b>「${v}」</b>多少钱？`);
+    askPrice();
+  };
+  document.getElementById('cSend').onclick = send;
+  inp.onkeydown = e=>{ if(e.key==='Enter') send(); };
+}
+
+function askPrice(){
+  setInput(`
+    <div class="flex gap-2">
+      <input id="cIn" type="number" placeholder="¥ 金额" class="flex-1 rounded-full bg-white border-2 border-[color:var(--coffee)]/30 px-4 py-2 text-sm focus:outline-none focus:border-[color:var(--ink)]">
+      <button id="cSend" class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full px-5 text-sm font-bold">发送</button>
+    </div>`);
+  const inp = document.getElementById('cIn'); inp.focus();
+  const send = ()=>{
+    const v = +inp.value; if(!v||v<=0) return;
+    chat.price = v; bubble('u', '¥' + fmt(v));
+    const savedIncome = +localStorage.getItem(LS_INCOME) || 0;
+    if(savedIncome){ chat.hourly = Math.round(savedIncome/22/8); afterHourly(true); }
+    else { bubble('h', '为了帮你看清这笔钱的<b>真实成本</b>，<br/>告诉我你的<b>月税后收入</b>是多少？'); askIncome(); }
+  };
+  document.getElementById('cSend').onclick = send;
+  inp.onkeydown = e=>{ if(e.key==='Enter') send(); };
+}
+
+function askIncome(){
+  setInput(`
+    <div class="flex gap-2">
+      <input id="cIn" type="number" placeholder="¥ 月税后收入" class="flex-1 rounded-full bg-white border-2 border-[color:var(--coffee)]/30 px-4 py-2 text-sm focus:outline-none focus:border-[color:var(--ink)]">
+      <button id="cSend" class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full px-5 text-sm font-bold">发送</button>
+    </div>`);
+  const inp = document.getElementById('cIn'); inp.focus();
+  const send = ()=>{
+    const v = +inp.value; if(!v||v<=0) return;
+    localStorage.setItem(LS_INCOME, v);
+    chat.hourly = Math.round(v/22/8);
+    bubble('u', '¥' + fmt(v));
+    afterHourly(false);
+  };
+  document.getElementById('cSend').onclick = send;
+  inp.onkeydown = e=>{ if(e.key==='Enter') send(); };
+}
+
+function afterHourly(saved){
+  const hours = (chat.price/chat.hourly).toFixed(1);
+  const days = Math.ceil(chat.price/(chat.hourly*8));
+  bubble('h', `你的时薪约 <b>¥${chat.hourly}</b>${saved?'（按上次记录）':''}。<br/>
+    也就是说，<b>「${chat.item}」</b>需要你工作 <b>约 ${hours} 小时</b>，<br/>
+    相当于 <b>${days} 天</b>的工作时间。<br/><br/>
+    现在问自己：<b>这值得我工作 ${days} 天吗？</b>`);
+  setTimeout(askUse, 600);
+}
+
+function askUse(){
+  bubble('h', `下一题：<br/><b>买回来后 1 年，你还会经常用它吗？</b>`);
+  setInput(`
+    <div class="grid grid-cols-5 gap-1">
+      ${[1,2,3,4,5].map(n=>`<button class="cBtn rounded-xl bg-white border-2 border-[color:var(--coffee)]/30 py-2 text-xs" data-v="${n}">
+        ${['几乎不会','偶尔','一般','经常','天天用'][n-1]}
+      </button>`).join('')}
+    </div>`);
+  document.querySelectorAll('.cBtn').forEach(b=>b.onclick=()=>{
+    chat.useFreq = +b.dataset.v;
+    bubble('u', b.textContent.trim());
+    askLonging();
+  });
+}
+
+function askLonging(){
+  bubble('h', `最后一题：<br/><b>如果今天不买，你会一直惦记吗？</b>`);
+  setInput(`
+    <div class="grid grid-cols-5 gap-1">
+      ${[1,2,3,4,5].map(n=>`<button class="cBtn rounded-xl bg-white border-2 border-[color:var(--coffee)]/30 py-2 text-xs" data-v="${n}">
+        ${['完全不会','可能不会','说不准','应该会','一定会'][n-1]}
+      </button>`).join('')}
+    </div>`);
+  document.querySelectorAll('.cBtn').forEach(b=>b.onclick=()=>{
+    chat.longing = +b.dataset.v;
+    bubble('u', b.textContent.trim());
+    verdict();
+  });
+}
+
+function verdict(){
+  clearInput();
+  const score = chat.useFreq*2 + chat.longing - 3; // -1..12
+  // compound: this same money invested 30 years at 8%
+  const future = Math.round(chat.price * Math.pow(1.08, 30));
+  // equivalent days of latte factor
+  const lf = +localStorage.getItem('lf_state_v1') ? dailySum : 30;
+  const lfDays = lf>0 ? Math.ceil(chat.price/lf) : null;
+
+  let advice, color, emoji;
+  if(score >= 8){
+    advice = `<b>建议：可以买。</b><br/>这件东西你会真的用到，也确实想要——这不是冲动，是经过验证的需求。<br/><br/>但还是请你做一件事：<b>等 24 小时再下单</b>。如果明天此时你还想要，那就买，享受它。`;
+    color = '#3a6e3a'; emoji = '✅';
+  } else if(score >= 5){
+    advice = `<b>建议：等一周再决定。</b><br/>你有点想要，但不算非常需要。<br/><br/>把它放进购物车 7 天。<br/>如果 7 天后你还会主动想起，那就买。<br/>多数情况下——<b>它会消失在你的脑海里</b>。`;
+    color = '#b8894a'; emoji = '⏳';
+  } else {
+    advice = `<b>建议：先不要买。</b><br/>这是典型的"突发奇想"——买完三个月后多半会落灰。<br/><br/>记住柔伊妈妈的话：<br/><i>"要为已经拥有的而开心。"</i>`;
+    color = '#8b3a3a'; emoji = '🛑';
+  }
+
+  bubble('h', `
+    <div class="space-y-2">
+      <div class="text-2xl">${emoji}</div>
+      <div>${advice}</div>
+      <div class="border-t border-[color:var(--coffee)]/20 pt-3 mt-3 text-xs space-y-1">
+        <div>💰 这 <b>¥${fmt(chat.price)}</b> 如果定投 30 年（年化 8%），会变成 <b>¥${fmt(future)}</b>。</div>
+        ${lfDays ? `<div>☕ 这笔钱 ≈ 你 <b>${lfDays} 天</b>的拿铁因子总和。</div>` : ''}
+        <div>⏰ ≈ 你工作 <b>${(chat.price/chat.hourly).toFixed(1)} 小时</b>。</div>
+      </div>
+    </div>
+  `);
+
+  setInput(`
+    <div class="grid grid-cols-2 gap-2">
+      <button id="again" class="bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full py-2 text-sm font-bold">再问一件</button>
+      <button id="goCalc" class="bg-white border-2 border-[color:var(--ink)] rounded-full py-2 text-sm font-bold">看我的拿铁因子</button>
+    </div>`);
+  document.getElementById('again').onclick = startChat;
+  document.getElementById('goCalc').onclick = ()=>go('calc');
+}
+
+document.getElementById('chatRestart').onclick = startChat;
+startChat();
 
 // service worker
 if ('serviceWorker' in navigator) {
