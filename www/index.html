@@ -144,8 +144,12 @@
   <h2 class="serif text-2xl font-bold mb-3">你的拿铁因子</h2>
 
   <div class="rounded-2xl bg-white/70 p-4 card-shadow">
-    <div class="text-xs text-[color:var(--coffee)] mb-2">勾选你几乎每天会花的小额支出</div>
+    <div class="flex items-center justify-between mb-2">
+      <div class="text-xs text-[color:var(--coffee)]">勾选你几乎每天会花的小额支出</div>
+      <button id="addFactorBtn" class="text-xs bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full px-3 py-1 active:scale-95 transition">+ 添加</button>
+    </div>
     <div id="factors" class="flex flex-wrap gap-2"></div>
+    <div class="text-[10px] text-[color:var(--coffee)]/60 mt-2">长按自定义项可删除</div>
   </div>
 
   <div class="mt-3 rounded-2xl bg-[color:var(--ink)] text-[color:var(--cream)] p-5 card-shadow">
@@ -266,6 +270,29 @@
 </section>
 
 </main>
+
+<!-- ===== ADD FACTOR MODAL ===== -->
+<div id="addModal" class="fixed inset-0 z-50 hidden items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-md bg-[color:var(--cream)] rounded-t-3xl md:rounded-3xl p-6 card-shadow animate-[fade_.25s]">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="serif text-xl font-bold">添加你的拿铁因子</h3>
+      <button id="modalClose" class="text-2xl text-[color:var(--coffee)]">×</button>
+    </div>
+    <label class="block mb-3">
+      <span class="text-xs text-[color:var(--coffee)]">选个图标</span>
+      <div id="emojiPicker" class="flex flex-wrap gap-2 mt-2"></div>
+    </label>
+    <label class="block mb-3">
+      <span class="text-xs text-[color:var(--coffee)]">品类名称</span>
+      <input id="newName" type="text" placeholder="例如：早餐豆浆" maxlength="10" class="w-full mt-1 bg-transparent border-b-2 border-[color:var(--ink)] py-2 serif text-lg focus:outline-none">
+    </label>
+    <label class="block mb-5">
+      <span class="text-xs text-[color:var(--coffee)]">每天花多少（元）</span>
+      <input id="newAmount" type="number" min="1" placeholder="例如：8" class="w-full mt-1 bg-transparent border-b-2 border-[color:var(--ink)] py-2 serif text-lg focus:outline-none">
+    </label>
+    <button id="modalSave" class="w-full bg-[color:var(--ink)] text-[color:var(--cream)] rounded-full py-3 font-bold active:scale-95 transition">添加并勾选</button>
+  </div>
+</div>
 
 <!-- ========== BOTTOM TAB BAR ========== -->
 <nav class="fixed bottom-0 inset-x-0 z-40 bg-[color:var(--cream)]/95 backdrop-blur border-t border-[color:var(--coffee)]/15 nav-safe">
@@ -402,7 +429,7 @@ document.querySelectorAll('.filter-btn').forEach(b=>{
 });
 
 // ============ CALC: factors ============
-const factors = [
+const defaultFactors = [
   {k:'拿铁咖啡', v:30, e:'☕'},
   {k:'奶茶', v:18, e:'🧋'},
   {k:'外卖加价', v:15, e:'🍱'},
@@ -414,20 +441,81 @@ const factors = [
   {k:'游戏内购', v:15, e:'🎮'},
   {k:'便利店', v:12, e:'🏪'},
 ];
+const LS_FACTORS = 'lf_factors_v1', LS_STATE = 'lf_state_v1';
+let factors = JSON.parse(localStorage.getItem(LS_FACTORS) || 'null') || defaultFactors.slice();
+const state = new Set(JSON.parse(localStorage.getItem(LS_STATE) || 'null') || ['拿铁咖啡','奶茶','外卖加价']);
 const fbox = document.getElementById('factors');
-const state = new Set(['拿铁咖啡','奶茶','外卖加价']);
-factors.forEach(f=>{
-  const b = document.createElement('button');
-  b.className = 'chip border-2 border-[color:var(--coffee)]/30 px-3 py-1.5 rounded-full text-xs';
-  b.innerHTML = `${f.e} ${f.k} <span class="opacity-60">¥${f.v}</span>`;
-  if(state.has(f.k)) b.classList.add('on');
-  b.onclick = ()=>{
-    if(state.has(f.k)){state.delete(f.k); b.classList.remove('on');}
-    else{state.add(f.k); b.classList.add('on');}
-    recalc();
-  };
-  fbox.appendChild(b);
-});
+function saveFactors(){
+  localStorage.setItem(LS_FACTORS, JSON.stringify(factors));
+  localStorage.setItem(LS_STATE, JSON.stringify([...state]));
+}
+function renderFactors(){
+  fbox.innerHTML = '';
+  factors.forEach(f=>{
+    const b = document.createElement('button');
+    b.className = 'chip border-2 border-[color:var(--coffee)]/30 px-3 py-1.5 rounded-full text-xs';
+    b.innerHTML = `${f.e} ${f.k} <span class="opacity-60">¥${f.v}</span>${f.custom?' <span class="opacity-40">·</span>':''}`;
+    if(state.has(f.k)) b.classList.add('on');
+    b.onclick = ()=>{
+      if(state.has(f.k)){state.delete(f.k); b.classList.remove('on');}
+      else{state.add(f.k); b.classList.add('on');}
+      saveFactors(); recalc();
+    };
+    if(f.custom){
+      let timer;
+      const start = ()=>{ timer = setTimeout(()=>{
+        if(confirm(`删除"${f.k}"？`)){
+          factors = factors.filter(x=>x.k!==f.k);
+          state.delete(f.k); saveFactors(); renderFactors(); recalc();
+        }
+      }, 600); };
+      const cancel = ()=>clearTimeout(timer);
+      b.addEventListener('touchstart', start, {passive:true});
+      b.addEventListener('mousedown', start);
+      ['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>b.addEventListener(ev, cancel));
+    }
+    fbox.appendChild(b);
+  });
+}
+renderFactors();
+
+// ============ ADD FACTOR MODAL ============
+const modal = document.getElementById('addModal');
+const emojiList = ['☕','🧋','🍱','🚕','🚬','🍬','📺','🛍️','🎮','🏪','🍔','🍕','🥤','🍷','🍰','🥐','🍜','🍦','💄','📚','🎬','🎵','🚇','⛽','🅿️','🐱','🌸','💊','🧴','🧦','🛒','🍫','🍺','💼','🎁'];
+const picker = document.getElementById('emojiPicker');
+let pickedEmoji = '☕';
+function renderEmojis(){
+  picker.innerHTML = '';
+  emojiList.forEach(e=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'w-9 h-9 rounded-full text-lg border-2 ' + (e===pickedEmoji?'border-[color:var(--ink)] bg-[color:var(--crema)]/40':'border-transparent');
+    b.textContent = e;
+    b.onclick = ()=>{ pickedEmoji = e; renderEmojis(); };
+    picker.appendChild(b);
+  });
+}
+function openModal(){
+  pickedEmoji = '☕';
+  document.getElementById('newName').value = '';
+  document.getElementById('newAmount').value = '';
+  renderEmojis();
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+}
+function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); }
+document.getElementById('addFactorBtn').onclick = openModal;
+document.getElementById('modalClose').onclick = closeModal;
+modal.onclick = (e)=>{ if(e.target===modal) closeModal(); };
+document.getElementById('modalSave').onclick = ()=>{
+  const name = document.getElementById('newName').value.trim();
+  const amt = +document.getElementById('newAmount').value;
+  if(!name){ alert('请填写品类名称'); return; }
+  if(!amt || amt<=0){ alert('请填写每天金额'); return; }
+  if(factors.some(f=>f.k===name)){ alert('已经有同名品类了'); return; }
+  factors.push({k:name, v:amt, e:pickedEmoji, custom:true});
+  state.add(name);
+  saveFactors(); renderFactors(); recalc(); closeModal();
+};
 
 let dailySum = 0, chart;
 function recalc(){
@@ -524,12 +612,10 @@ document.querySelectorAll('.dream-preset').forEach(b=>{
 
 // reset
 document.getElementById('resetBtn').onclick = ()=>{
-  if(confirm('重置所有输入？')){
+  if(confirm('重置所有自定义项与勾选？')){
+    factors = defaultFactors.slice();
     state.clear(); ['拿铁咖啡','奶茶','外卖加价'].forEach(k=>state.add(k));
-    document.querySelectorAll('#factors button').forEach((b,i)=>{
-      b.classList.toggle('on', state.has(factors[i].k));
-    });
-    recalc();
+    saveFactors(); renderFactors(); recalc();
   }
 };
 
